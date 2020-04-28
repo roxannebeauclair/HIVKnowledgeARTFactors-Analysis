@@ -1,0 +1,69 @@
+---
+title: "HERStory HIV Knowledge and ART Factors Paper"
+author: "Roxanne Beauclair"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: TRUE
+    toc_depth: 5
+    toc_float: FALSE
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+# ===================
+# Print options
+# ===================
+
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = FALSE)
+
+options(table_counter = TRUE)
+options(table_counter_str = "<b>Table %s:</b> ")
+
+
+
+# ===================
+# Relative file paths
+# ===================
+wd <- "/Users/roxannebeauclair/Dropbox/Consulting/Projects/MRC/School Dropout Absenteeism Paper/Analysis"
+cdata <- paste0(wd, "/Data/Cleaned")
+script <- paste0(wd, "/Scripts")
+plots <- paste0(wd, "/Plots")
+newsesvarsdf <- paste0(cdata, "/04-newsesvars.rda")
+weighteddf <- paste0(cdata, "/05-weighted.rda")
+fxn <- paste0(script, "/00-Functions.R")
+
+# ====================
+# Loading dependencies
+# ====================
+source(fxn)
+
+InstallLoad("tidyverse", "janitor", "broom", "survey", 
+            "srvyr", "htmlTable", "sjPlot", "sjmisc", 
+            "sjlabelled")
+
+# =============
+# Load datasets
+# =============
+load(newsesvarsdf)
+load(weighteddf)
+
+```
+
+<style>
+
+table, td, th {
+  
+  padding-left: .6em;
+  padding-right: .6em;
+  white-space: nowrap;
+  
+}
+
+</style>
+
+<br>
+<br>
