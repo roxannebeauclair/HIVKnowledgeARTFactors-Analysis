@@ -226,3 +226,67 @@ recap_bi_catvar_svy <- function(svy, var, byvar, percent = "col") {
   
 }
 
+# This function returns a table that summarizes variables overall
+# and by another variable, using survey data. It also performs
+# a wilcoxon test and uses the svyranktest() function from the 
+# survey package. 
+# This function returns medians (Freq) and IQRs (Prop)
+# and 95% intervals for the medians
+
+recap_bi_numvar_svy <- function(svy, var, byvar) {
+  
+  df <- svy
+  rowvar <- enquo(var)
+  colvar <- enquo(byvar)
+  rowvar_str <- quo_name(rowvar)
+  colvar_str <- quo_name(colvar)
+  formula <- as.formula(paste(rowvar_str, " ~ ", colvar_str))
+  
+  overall_tab <- df %>%
+    summarise(med = survey_quantile(!! rowvar,
+                                    na.rm = T,
+                                    quantiles = c(0.50, 0.25, 0.75),
+                                    vartype = "ci")) %>%
+    mutate_at(vars(starts_with("med")), list(~round(., 1))) %>%
+    select(-med_q25_low, -med_q25_upp, -med_q75_low, -med_q75_upp) %>%
+    unite(Prop, med_q25, med_q75, sep = " — ") %>%
+    unite(CI, med_q50_low, med_q50_upp, sep = " — ") %>%
+    rename(Freq = med_q50) %>%
+    rownames_to_column()
+  
+  by_tab <- df %>%
+    group_by(!! colvar, .drop = FALSE) %>%
+    summarise(med = survey_quantile(!! rowvar,
+                                    na.rm = T,
+                                    quantiles = c(0.50, 0.25, 0.75),
+                                    vartype = "ci")) %>%
+    mutate_at(vars(starts_with("med")), list(~round(., 1))) %>%
+    select(-med_q25_low, -med_q25_upp, -med_q75_low, -med_q75_upp) %>%
+    unite(Prop, med_q25, med_q75, sep = " — ") %>%
+    unite(CI, med_q50_low, med_q50_upp, sep = " — ") %>%
+    rename(Freq = med_q50) %>%
+    gather(key = "stat", value = "value", Freq, Prop, CI) %>%
+    unite(var_stat, !! colvar, stat, sep = "_") %>%
+    spread(key = var_stat, value = value) %>%
+    select(No_Freq, No_Prop, No_CI, Yes_Freq, Yes_Prop, Yes_CI) %>%
+    rownames_to_column()
+  
+  p <- svyranktest(formula,
+                   df,
+                   test = "wilcoxon") %>%
+    tidy() %>%
+    select(p.value) %>%
+    mutate(p.value = format(round(p.value, 4), nsmall = 4)) %>%
+    rownames_to_column()
+  
+  tab <- overall_tab %>%
+    left_join(by_tab, by = c("rowname")) %>%
+    left_join(p, by = "rowname") %>%
+    select(-rowname) %>%
+    as.matrix()
+  
+  row.names(tab) <- "Med and IQR"
+  
+  return(tab)
+  
+}
