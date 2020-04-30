@@ -82,7 +82,7 @@ recap_uni_catvar_svy <- function(svy, var) {
   c_levels <- unique(df$variables[[group_var_str]])
   
   tab_n <- df %>%
-    group_by(!! group_var, .drop = FALSE) %>%
+    group_by(!! group_var, .drop = TRUE) %>%
     summarise(Freq = unweighted(n()))
   
   tab_prop <- map_df(c_levels, function(cat) {
@@ -390,4 +390,81 @@ recap_bi_numvar_svy <- function(svy, var, byvar) {
   
   return(tab)
   
+}
+
+# This function takes as inputs a survey-design dataset and 
+# a quoted name of a variable. The variable should be a variable
+# that is one of many options for a multiple select question. 
+# In other words, yes/no they selected that option.
+# The function summarises how many people said yes (n),
+# and the propotion (prop), the 95% CI (prop_low and prop_high).
+# The proportions are calculated using svyciprop() from the survey
+# package. Specifically, I use the "beta" method. This method
+# uses the incomplete beta function as in binom.test(), with 
+# an effective sample size based on the estimated variance
+# of the proportion. Allows more accurate intervals near 0 and 100%
+
+recap_uni_catvar_svy_forplots <- function(svy, varname) {
+  df <- svy
+  var <- sym(varname)
+  
+  tab_n <- df %>%
+    group_by(!!var, .drop = FALSE) %>%
+    summarise(n = unweighted(n())) %>%
+    filter(!!var == "Yes") %>%
+    select(-!!var)
+  
+  tab_prop <- df %>%
+    summarise(prop = survey_mean(!!var == "Yes",
+                                 prop = TRUE,
+                                 vartype = "ci",
+                                 prop_method = "beta")) %>%
+    mutate_at(vars(starts_with("Prop")), 
+              list(~round(. * 100, 1)))
+  
+  tab <- bind_cols(tab_n, tab_prop)
+  
+  return(tab)
+}
+
+# This function takes as inputs a survey-design dataset and 
+# a quoted name of a variable. The variable should be a variable
+# that is one of many options for a multiple select question. 
+# In other words, yes/no they selected that option. The third
+# argument is the stratification variable. This should be unquoted.
+# The function summarises how many people said yes (n),
+# and the propotion (prop), the 95% CI (prop_low and prop_high).
+# The proportions are calculated using svyciprop() from the survey
+# package. Specifically, I use the "beta" method. This method
+# uses the incomplete beta function as in binom.test(), with 
+# an effective sample size based on the estimated variance
+# of the proportion. Allows more accurate intervals near 0 and 100%
+# A tibble is returned that has a row for each stratification level, 
+# with summaries that answered "Yes".
+
+recap_strata_catvar_svy_forplots <- function(svy, varname, strata) {
+  df <- svy
+  var <- sym(varname)
+  group <- enquo(strata)
+  group_str <- quo_name(group)
+  
+  tab_n <- df %>%
+    group_by(!!group, !!var, .drop = TRUE) %>%
+    summarise(n = unweighted(n())) %>%
+    filter(!!var == "Yes") %>%
+    select(-!!var)
+  
+  tab_prop <- df %>%
+    group_by(!!group) %>%
+    summarise(prop = survey_mean(!!var == "Yes",
+                                 prop = TRUE,
+                                 vartype = "ci",
+                                 prop_method = "beta")) %>%
+    mutate_at(vars(starts_with("Prop")), 
+              list(~round(. * 100, 1)))
+  
+  tab <- tab_n %>%
+    full_join(tab_prop, by = group_str)
+  
+  return(tab)
 }
