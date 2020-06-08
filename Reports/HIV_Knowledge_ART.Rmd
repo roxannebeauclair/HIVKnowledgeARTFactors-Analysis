@@ -233,30 +233,28 @@ tab3 <- recap_bi_catvar_svy(svy = svydf1, var = parents_live_here, byvar = hiv_k
 tab4 <- recap_bi_catvar_svy(svy = svydf1, var = community, byvar = hiv_knowledge)
 tab5 <- recap_bi_catvar_svy(svy = svydf1, var = health_problem, byvar = hiv_knowledge)
 tab6 <- recap_bi_catvar_svy(svy = svydf1, var = hunger, byvar = hiv_knowledge)
-tab7 <- recap_bi_catvar_svy(svy = svydf1, var = auditCcat, byvar = hiv_knowledge)
-tab8 <- recap_bi_catvar_svy(svy = svydf1, var = duditcat, byvar = hiv_knowledge)
-tab9 <- recap_bi_catvar_svy(svy = svydf2, var = pregever, byvar = hiv_knowledge)
-tab10 <- recap_bi_catvar_svy(svy = svydf1, var = ipv_any, byvar = hiv_knowledge)
-tab11 <- recap_bi_catvar_svy(svy = svydf1, var = ever_raped, byvar = hiv_knowledge)
-tab12 <- recap_bi_numvar_svy(svy = svydf1, var = wellbeing_score, byvar = hiv_knowledge)
-tab13 <- recap_bi_numvar_svy(svy = svydf1, var = resilience_score, byvar = hiv_knowledge)
-tab14 <- recap_bi_numvar_svy(svy = svydf1, var = support_family_score, byvar = hiv_knowledge)
-tab15 <- recap_bi_numvar_svy(svy = svydf1, var = support_peers_score, byvar = hiv_knowledge)
-tab16 <- recap_bi_numvar_svy(svy = svydf1, var = support_specialperson_score, byvar = hiv_knowledge)
-tab17 <- recap_bi_numvar_svy(svy = svydf1, var = group_membership_score, byvar = hiv_knowledge)
-tab18 <- recap_bi_numvar_svy(svy = svydf1, var = support_group_score, byvar = hiv_knowledge)
-tab19 <- recap_bi_numvar_svy(svy = svydf1, var = support_individuals_score, byvar = hiv_knowledge)
-tab20 <- recap_bi_numvar_svy(svy = svydf1, var = gender_equity_score, byvar = hiv_knowledge)
-tab21 <- recap_bi_catvar_svy(svy = svydf1, var = rel_status2, byvar = hiv_knowledge)
-tab22 <- recap_bi_catvar_svy(svy = svydf1, var = bf, byvar = hiv_knowledge)
-tab23 <- recap_bi_catvar_svy(svy = svydf1, var = ever_sex, byvar = hiv_knowledge)
-tab24 <- recap_bi_catvar_svy(svy = svydf1, var = trans_sex, byvar = hiv_knowledge)
-tab25 <- recap_bi_catvar_svy(svy = svydf2, var = partner_older_5, byvar = hiv_knowledge)
-tab26 <- recap_bi_catvar_svy(svy = svydf1, var = condom, byvar = hiv_knowledge)
-tab27 <- recap_bi_catvar_svy(svy = svydf1, var = contraception, byvar = hiv_knowledge)
-tab28 <- recap_bi_catvar_svy(svy = svydf1, var = hiv_test, byvar = hiv_knowledge)
-tab29 <- recap_bi_catvar_svy(svy = svydf4, var = freq_hiv_test, byvar = hiv_knowledge)
-tab30 <- recap_bi_catvar_svy(svy = svydf4, var = result, byvar = hiv_knowledge)
+tab7 <- recap_bi_catvar_svy(svy = svydf2, var = pregever, byvar = hiv_knowledge)
+tab8 <- recap_bi_catvar_svy(svy = svydf1, var = ipv_any, byvar = hiv_knowledge)
+tab9 <- recap_bi_catvar_svy(svy = svydf1, var = ever_raped, byvar = hiv_knowledge)
+tab10 <- recap_bi_numvar_svy(svy = svydf1, var = wellbeing_score, byvar = hiv_knowledge)
+tab11 <- recap_bi_numvar_svy(svy = svydf1, var = resilience_score, byvar = hiv_knowledge)
+tab12 <- recap_bi_numvar_svy(svy = svydf1, var = support_family_score, byvar = hiv_knowledge)
+tab13 <- recap_bi_numvar_svy(svy = svydf1, var = support_peers_score, byvar = hiv_knowledge)
+tab14 <- recap_bi_numvar_svy(svy = svydf1, var = support_specialperson_score, byvar = hiv_knowledge)
+tab15 <- recap_bi_numvar_svy(svy = svydf1, var = group_membership_score, byvar = hiv_knowledge)
+tab16 <- recap_bi_numvar_svy(svy = svydf1, var = support_group_score, byvar = hiv_knowledge)
+tab17 <- recap_bi_numvar_svy(svy = svydf1, var = support_individuals_score, byvar = hiv_knowledge)
+tab18 <- recap_bi_numvar_svy(svy = svydf1, var = gender_equity_score, byvar = hiv_knowledge)
+tab19 <- recap_bi_catvar_svy(svy = svydf1, var = rel_status2, byvar = hiv_knowledge)
+tab20 <- recap_bi_catvar_svy(svy = svydf1, var = bf, byvar = hiv_knowledge)
+tab21 <- recap_bi_catvar_svy(svy = svydf1, var = ever_sex, byvar = hiv_knowledge)
+tab22 <- recap_bi_catvar_svy(svy = svydf1, var = trans_sex, byvar = hiv_knowledge)
+tab23 <- recap_bi_catvar_svy(svy = svydf2, var = partner_older_5, byvar = hiv_knowledge)
+tab24 <- recap_bi_catvar_svy(svy = svydf1, var = condom, byvar = hiv_knowledge)
+tab25 <- recap_bi_catvar_svy(svy = svydf1, var = contraception, byvar = hiv_knowledge)
+tab26 <- recap_bi_catvar_svy(svy = svydf1, var = hiv_test, byvar = hiv_knowledge)
+tab27 <- recap_bi_catvar_svy(svy = svydf4, var = freq_hiv_test, byvar = hiv_knowledge)
+tab28 <- recap_bi_catvar_svy(svy = svydf4, var = result, byvar = hiv_knowledge)
 
 
 hiv_knowledge_tab <- rbind(tab1, tab2, tab3, tab4,
@@ -265,8 +263,7 @@ hiv_knowledge_tab <- rbind(tab1, tab2, tab3, tab4,
                      tab13, tab14, tab15, tab16,
                      tab17, tab18, tab19, tab20, 
                      tab21, tab22, tab23, tab24, 
-                     tab25, tab26, tab27, tab28,
-                     tab29, tab30)
+                     tab25, tab26, tab27, tab28)
 
 
 
@@ -297,8 +294,6 @@ htmlTable(hiv_knowledge_tab,
                      "<b>Length of time lived in their community<b>",
                      "<b>Has been to a hospital or clinic in past year for a health problem<b>",  
                      "<b>In past month, participant or household member went a day and night without eating because of lack of food<b>",
-                     "<b>Had an high alcohol use (Audit-C score 2 or higher)<b>",
-                     "<b>Had high drug use (Dudit score 2 or higher)<b>",
                      "<b>Ever pregnant ^&dagger;^<b>",
                      "<b>Experienced any form of IPV<b>",
                      "<b>Ever forced to have sex or raped<b>",
@@ -327,16 +322,15 @@ htmlTable(hiv_knowledge_tab,
                        nrow(tab13), nrow(tab14), nrow(tab15), nrow(tab16),
                        nrow(tab17), nrow(tab18), nrow(tab19), nrow(tab20),
                        nrow(tab21), nrow(tab22), nrow(tab23), nrow(tab24),
-                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28),
-                       nrow(tab29), nrow(tab30)),
+                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28)),
           tspanner = c("<b>Socio-Demographic Factors<b>", "<b>Health and Wellbeing Factors<b>",
                        "<b>Psycho-Social Factors<b>", "<b>Sexual and Reproductive Health Behaviours<b>",
                        "<b>HIV Testing Behaviours<b>"),
           n.tspanner = c(nrow(tab1) + nrow(tab2) + nrow(tab3) + nrow(tab4),
-                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9) + nrow(tab10) + nrow(tab11),
-                         nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19) + nrow(tab20),
-                         nrow(tab21) + nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26) + nrow(tab27),
-                         nrow(tab28) + nrow(tab29) + nrow(tab30)),
+                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9),
+                         nrow(tab10) + nrow(tab11) + nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18),
+                         nrow(tab19) + nrow(tab20) + nrow(tab21) + nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25),
+                         nrow(tab26) + nrow(tab27) + nrow(tab28)),
           css.tspanner = "background: lightgrey;",
           rowlabel = "Variable",
           css.rgroup = "",
@@ -419,30 +413,28 @@ tab3 <- recap_bi_catvar_svy(svy = svydf6, var = parents_live_here, byvar = art_e
 tab4 <- recap_bi_catvar_svy(svy = svydf6, var = community, byvar = art_exposure)
 tab5 <- recap_bi_catvar_svy(svy = svydf6, var = health_problem, byvar = art_exposure)
 tab6 <- recap_bi_catvar_svy(svy = svydf6, var = hunger, byvar = art_exposure)
-tab7 <- recap_bi_catvar_svy(svy = svydf6, var = auditCcat, byvar = art_exposure)
-tab8 <- recap_bi_catvar_svy(svy = svydf6, var = duditcat, byvar = art_exposure)
-tab9 <- recap_bi_catvar_svy(svy = svydf7, var = pregever, byvar = art_exposure)
-tab10 <- recap_bi_catvar_svy(svy = svydf6, var = ipv_any, byvar = art_exposure)
-tab11 <- recap_bi_catvar_svy(svy = svydf6, var = ever_raped, byvar = art_exposure)
-tab12 <- recap_bi_numvar_svy(svy = svydf6, var = wellbeing_score, byvar = art_exposure)
-tab13 <- recap_bi_numvar_svy(svy = svydf6, var = resilience_score, byvar = art_exposure)
-tab14 <- recap_bi_numvar_svy(svy = svydf6, var = support_family_score, byvar = art_exposure)
-tab15 <- recap_bi_numvar_svy(svy = svydf6, var = support_peers_score, byvar = art_exposure)
-tab16 <- recap_bi_numvar_svy(svy = svydf6, var = support_specialperson_score, byvar = art_exposure)
-tab17 <- recap_bi_numvar_svy(svy = svydf6, var = group_membership_score, byvar = art_exposure)
-tab18 <- recap_bi_numvar_svy(svy = svydf6, var = support_group_score, byvar = art_exposure)
-tab19 <- recap_bi_numvar_svy(svy = svydf6, var = support_individuals_score, byvar = art_exposure)
-tab20 <- recap_bi_numvar_svy(svy = svydf6, var = gender_equity_score, byvar = art_exposure)
-tab21 <- recap_bi_numvar_svy(svy = svydf6, var = stigma_hivpos, byvar = art_exposure)
-tab22 <- recap_bi_catvar_svy(svy = svydf6, var = rel_status2, byvar = art_exposure)
-tab23 <- recap_bi_catvar_svy(svy = svydf6, var = bf, byvar = art_exposure)
-tab24 <- recap_bi_catvar_svy(svy = svydf6, var = ever_sex, byvar = art_exposure)
-tab25 <- recap_bi_catvar_svy(svy = svydf6, var = trans_sex, byvar = art_exposure)
-tab26 <- recap_bi_catvar_svy(svy = svydf7, var = partner_older_5, byvar = art_exposure)
-tab27 <- recap_bi_catvar_svy(svy = svydf6, var = condom, byvar = art_exposure)
-tab28 <- recap_bi_catvar_svy(svy = svydf6, var = contraception, byvar = art_exposure)
-tab29 <- recap_bi_catvar_svy(svy = svydf6, var = hiv_recent, byvar = art_exposure)
-tab30 <- recap_bi_catvar_svy(svy = svydf9, var = miss_app, byvar = art_exposure)
+tab7 <- recap_bi_catvar_svy(svy = svydf7, var = pregever, byvar = art_exposure)
+tab8 <- recap_bi_catvar_svy(svy = svydf6, var = ipv_any, byvar = art_exposure)
+tab9 <- recap_bi_catvar_svy(svy = svydf6, var = ever_raped, byvar = art_exposure)
+tab10 <- recap_bi_numvar_svy(svy = svydf6, var = wellbeing_score, byvar = art_exposure)
+tab11 <- recap_bi_numvar_svy(svy = svydf6, var = resilience_score, byvar = art_exposure)
+tab12 <- recap_bi_numvar_svy(svy = svydf6, var = support_family_score, byvar = art_exposure)
+tab13 <- recap_bi_numvar_svy(svy = svydf6, var = support_peers_score, byvar = art_exposure)
+tab14 <- recap_bi_numvar_svy(svy = svydf6, var = support_specialperson_score, byvar = art_exposure)
+tab15 <- recap_bi_numvar_svy(svy = svydf6, var = group_membership_score, byvar = art_exposure)
+tab16 <- recap_bi_numvar_svy(svy = svydf6, var = support_group_score, byvar = art_exposure)
+tab17 <- recap_bi_numvar_svy(svy = svydf6, var = support_individuals_score, byvar = art_exposure)
+tab18 <- recap_bi_numvar_svy(svy = svydf6, var = gender_equity_score, byvar = art_exposure)
+tab19 <- recap_bi_numvar_svy(svy = svydf6, var = stigma_hivpos, byvar = art_exposure)
+tab20 <- recap_bi_catvar_svy(svy = svydf6, var = rel_status2, byvar = art_exposure)
+tab21 <- recap_bi_catvar_svy(svy = svydf6, var = bf, byvar = art_exposure)
+tab22 <- recap_bi_catvar_svy(svy = svydf6, var = ever_sex, byvar = art_exposure)
+tab23 <- recap_bi_catvar_svy(svy = svydf6, var = trans_sex, byvar = art_exposure)
+tab24 <- recap_bi_catvar_svy(svy = svydf7, var = partner_older_5, byvar = art_exposure)
+tab25 <- recap_bi_catvar_svy(svy = svydf6, var = condom, byvar = art_exposure)
+tab26 <- recap_bi_catvar_svy(svy = svydf6, var = contraception, byvar = art_exposure)
+tab27 <- recap_bi_catvar_svy(svy = svydf6, var = hiv_recent, byvar = art_exposure)
+tab28 <- recap_bi_catvar_svy(svy = svydf9, var = miss_app, byvar = art_exposure)
 
 
 
@@ -452,8 +444,7 @@ art_tab <- rbind(tab1, tab2, tab3, tab4,
                      tab13, tab14, tab15, tab16,
                      tab17, tab18, tab19, tab20, 
                      tab21, tab22, tab23, tab24, 
-                     tab25, tab26, tab27, tab28, 
-                     tab29, tab30)
+                     tab25, tab26, tab27, tab28)
 
 
 
@@ -484,8 +475,6 @@ htmlTable(art_tab,
                      "<b>Length of time lived in their community<b>",
                      "<b>Has been to a hospital or clinic in past year for a health problem<b>",  
                      "<b>In past month, participant or household member went a day and night without eating because of lack of food<b>",
-                     "<b>Had an high alcohol use (Audit-C score 2 or higher)<b>",
-                     "<b>Had high drug use (Dudit score 2 or higher)<b>",
                      "<b>Ever pregnant ^&dagger;^<b>",
                      "<b>Experienced any form of IPV<b>",
                      "<b>Ever forced to have sex or raped<b>",
@@ -514,16 +503,15 @@ htmlTable(art_tab,
                        nrow(tab13), nrow(tab14), nrow(tab15), nrow(tab16),
                        nrow(tab17), nrow(tab18), nrow(tab19), nrow(tab20),
                        nrow(tab21), nrow(tab22), nrow(tab23), nrow(tab24),
-                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28),
-                       nrow(tab29), nrow(tab30)),
+                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28)),
            tspanner = c("<b>Socio-Demographic Factors<b>", "<b>Health and Wellbeing Factors<b>",
                        "<b>Psycho-Social Factors<b>", "<b>Sexual and Reproductive Health Behaviours<b>",
                        "<b>HIV-Related Factors<b>"),
           n.tspanner = c(nrow(tab1) + nrow(tab2) + nrow(tab3) + nrow(tab4),
-                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9) + nrow(tab10) + nrow(tab11),
-                         nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19) + nrow(tab20) + nrow(tab21),
-                         nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26) + nrow(tab27) + nrow(tab28),
-                         nrow(tab29) + nrow(tab30)),
+                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9),
+                         nrow(tab10) + nrow(tab11) + nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19),
+                         nrow(tab20) + nrow(tab21) + nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26),
+                         nrow(tab27) + nrow(tab28)),
           css.tspanner = "background: lightgrey;",
           rowlabel = "Variable",
           css.rgroup = "",
