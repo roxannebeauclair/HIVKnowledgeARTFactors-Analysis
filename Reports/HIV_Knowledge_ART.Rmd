@@ -227,7 +227,7 @@ In the HERStory study there were `r nrow(df)` AGYW participants, of which `r nro
 
 ```{r hiv_knowledge_tab_setup, include = FALSE}
 
-tab1 <- recap_bi_numvar_svy(svy = svydf1, var = age, byvar = hiv_knowledge)
+tab1 <- recap_bi_catvar_svy(svy = svydf1, var = age_cat, byvar = hiv_knowledge)
 tab2 <- recap_bi_catvar_svy(svy = svydf1, var = highestpassed2, byvar = hiv_knowledge)
 tab3 <- recap_bi_catvar_svy(svy = svydf1, var = parents_live_here, byvar = hiv_knowledge)
 tab4 <- recap_bi_catvar_svy(svy = svydf1, var = community, byvar = hiv_knowledge)
@@ -407,7 +407,7 @@ Among the `r nrow(df3)` AGYW participants who knew their HIV+ status, `r nrow(df
 
 ```{r art_tab_setup, include = FALSE}
 
-tab1 <- recap_bi_numvar_svy(svy = svydf6, var = age, byvar = art_exposure)
+tab1 <- recap_bi_catvar_svy(svy = svydf6, var = age_cat, byvar = art_exposure)
 tab2 <- recap_bi_catvar_svy(svy = svydf6, var = highestpassed2, byvar = art_exposure)
 tab3 <- recap_bi_catvar_svy(svy = svydf6, var = parents_live_here, byvar = art_exposure)
 tab4 <- recap_bi_catvar_svy(svy = svydf6, var = community, byvar = art_exposure)
@@ -663,39 +663,39 @@ not_taking_arv_tab %>%
 <br>
 
 ```{r hiv_knowledge_models_setup, include = FALSE}
-m1 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + wellbeing_score, 
+m1 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + wellbeing_score, 
              design = svydf1,
              family = "binomial")
 
-m2 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + resilience_score, 
+m2 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + resilience_score, 
              design = svydf1,
              family = "binomial")
 
-m3 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_family_score, 
+m3 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + support_family_score, 
              design = svydf1,
              family = "binomial")
 
-m4 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_peers_score, 
+m4 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + support_peers_score, 
              design = svydf1,
              family = "binomial")
 
-m5 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_specialperson_score, 
+m5 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + support_specialperson_score, 
              design = svydf1,
              family = "binomial")
 
-m6 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + group_membership_score, 
+m6 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + group_membership_score, 
              design = svydf1,
              family = "binomial")
 
-m7 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_group_score, 
+m7 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + support_group_score, 
              design = svydf1,
              family = "binomial")
 
-m8 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_individuals_score, 
+m8 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + support_individuals_score, 
              design = svydf1,
              family = "binomial")
 
-m9 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + gender_equity_score, 
+m9 <- svyglm(hiv_knowledge ~ age_cat + highestpassed2 + community + gender_equity_score, 
              design = svydf1,
              family = "binomial")
 
@@ -703,7 +703,7 @@ m9 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + gender_equity_sc
 
 ```{r hiv_knowledge_models}
 
-pred_labels <- c(age = "Age",
+pred_labels <- c(`age_cat20-24` = "Age: 20-24 year olds",
                  highestpassed2Secondary = "Highest grade acheived: Secondary",
                  `highestpassed2Some Post-Secondary` = "Highest grade acheived: Some post-secondary",
                  Always = "Length of time in community: Always",
@@ -753,43 +753,43 @@ One example for how you would interpret these results is for the support from pe
 <br>
 
 ```{r art_models_setup, include = FALSE}
-m1 <- svyglm(art_exposure ~ age + highestpassed2 + community + wellbeing_score, 
+m1 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + wellbeing_score, 
              design = svydf6,
              family = "binomial")
 
-m2 <- svyglm(art_exposure ~ age + highestpassed2 + community + resilience_score, 
+m2 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + resilience_score, 
              design = svydf6,
              family = "binomial")
 
-m3 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_family_score, 
+m3 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_family_score, 
              design = svydf6,
              family = "binomial")
 
-m4 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_peers_score, 
+m4 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_peers_score, 
              design = svydf6,
              family = "binomial")
 
-m5 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_specialperson_score, 
+m5 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_specialperson_score, 
              design = svydf6,
              family = "binomial")
 
-m6 <- svyglm(art_exposure ~ age + highestpassed2 + community + group_membership_score, 
+m6 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + group_membership_score, 
              design = svydf6,
              family = "binomial")
 
-m7 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_group_score, 
+m7 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_group_score, 
              design = svydf6,
              family = "binomial")
 
-m8 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_individuals_score, 
+m8 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_individuals_score, 
              design = svydf6,
              family = "binomial")
 
-m9 <- svyglm(art_exposure ~ age + highestpassed2 + community + gender_equity_score, 
+m9 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + gender_equity_score, 
              design = svydf6,
              family = "binomial")
 
-m10 <- svyglm(art_exposure ~ age + highestpassed2 + community + stigma_hivpos, 
+m10 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + stigma_hivpos, 
              design = svydf6,
              family = "binomial")
 
@@ -797,7 +797,7 @@ m10 <- svyglm(art_exposure ~ age + highestpassed2 + community + stigma_hivpos,
 
 ```{r art_models}
 
-pred_labels <- c(age = "Age",
+pred_labels <- c(`age_cat20-24` = "Age: 20-24 year olds",
                  highestpassed2Secondary = "Highest grade acheived: Secondary",
                  `highestpassed2Some Post-Secondary` = "Highest grade acheived: Some post-secondary",
                  Always = "Length of time in community: Always",
