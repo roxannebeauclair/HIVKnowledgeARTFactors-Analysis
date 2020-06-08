@@ -753,11 +753,11 @@ One example for how you would interpret these results is for the support from pe
 <br>
 
 ```{r art_models_setup, include = FALSE}
-m1 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + wellbeing_score, 
+m1 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + ever_raped + wellbeing_score, 
              design = svydf6,
              family = "binomial")
 
-m2 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + resilience_score, 
+m2 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + ever_raped + resilience_score, 
              design = svydf6,
              family = "binomial")
 
@@ -785,7 +785,7 @@ m8 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + support_indiv
              design = svydf6,
              family = "binomial")
 
-m9 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + gender_equity_score, 
+m9 <- svyglm(art_exposure ~ age_cat + highestpassed2 + community + ever_raped + gender_equity_score, 
              design = svydf6,
              family = "binomial")
 
@@ -803,6 +803,7 @@ pred_labels <- c(`age_cat20-24` = "Age: 20-24 year olds",
                  Always = "Length of time in community: Always",
                  `communityMore than 5 years` = "Length of time in community: More than 5 years",
                  `community1-5 years` = "Length of time in community: 1-5 years",
+                 ever_rapedYes = "Was raped or had forced sex before", 
                  wellbeing_score = "Wellbeing",
                  resilience_score = "Resillience",
                  support_family_score = "Support from family",
@@ -835,4 +836,4 @@ tab_model(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
 <br>
 <br>
 
-Only model two has a significant association between one of the constructs and being on ART. For each unit increase in resilience, there was a `r round(( tidy(m2, exponentiate = TRUE)$estimate[7]) - 1.00, 2) * 100`% increase in the odds of being on ART, after adjusting for confounders. 
+Only model two has a significant association between one of the constructs and being on ART. For each unit increase in resilience, there was a `r round(( tidy(m2, exponentiate = TRUE)$estimate[8]) - 1.00, 2) * 100`% increase in the odds of being on ART, after adjusting for confounders. 
