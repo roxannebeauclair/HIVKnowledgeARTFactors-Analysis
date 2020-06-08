@@ -28,7 +28,7 @@ options(table_counter_str = "<b>Table %s:</b> ")
 # ===================
 # Relative file paths
 # ===================
-wd <- "/Users/roxannebeauclair/Dropbox/Consulting/Projects/MRC/School Dropout Absenteeism Paper/Analysis"
+wd <- "/Users/roxannebeauclair/Dropbox/Consulting/Projects/PHRU/HIV knowledge and ART/Analysis/HIVKnowledgeARTFactors-Analysis"
 cdata <- paste0(wd, "/Data/Cleaned")
 script <- paste0(wd, "/Scripts")
 plots <- paste0(wd, "/Plots")
@@ -67,3 +67,784 @@ table, td, th {
 
 <br>
 <br>
+
+```{r data_subsets, include = FALSE}
+
+# =======================
+# Survey design datasets
+# =======================
+
+# HIV positive
+svydf1 <- svydf %>%
+  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No"))) %>%
+  filter(hiv_final_wb == "Positive")
+
+# HIV positive, had sex
+svydf2 <- svydf1 %>%
+  filter(ever_sex == "Yes")
+
+# HIV positive, had sex and been pregnant
+svydf3 <- svydf1 %>%
+  filter(ever_sex == "Yes" & pregever == "Yes")
+
+# HIV positvie, had an hiv test
+svydf4 <- svydf1 %>%
+  filter(hiv_test == "Yes")
+
+# HIV positive, did not have an HIV test
+svydf5 <- svydf1 %>%
+  filter(hiv_test == "No")
+
+# HIV positive, know status
+svydf6 <- svydf1 %>%
+  filter(hiv_knowledge == "Yes" & !is.na(art_exposure))
+
+# HIV positive, know status, had sex
+svydf7 <- svydf6 %>%
+  filter(ever_sex == "Yes")
+
+# HIV positive, know status, and been pregnant
+svydf8 <- svydf6 %>%
+  filter(ever_sex == "Yes" & pregever == "Yes")
+
+# HIV positive, know status, missing appointment question
+svydf9 <- svydf6 %>%
+  filter(!is.na(miss_app))
+
+# HIV positive, know status, on ART
+# missing problem_meds* questions
+# missing easy_clinic_app* questions
+
+svydf10 <- svydf6 %>%
+  filter(art_exposure == "Yes" & !is.na(problem_meds_transport))
+
+# HIV positive, know status,
+# Not on ART
+# missing not_taking_arv* questions
+svydf11 <- svydf6 %>%
+  filter(art_exposure == "No" & !is.na(not_taking_arv_cd4high))
+
+# ====================
+# Regular datasets
+# ====================
+df1 <- df %>%
+  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No"))) %>%
+  filter(hiv_final_wb == "Positive")
+
+df2 <- df1 %>%
+  filter(hiv_test == "No")
+
+df3 <- df1 %>%
+  filter(hiv_knowledge == "Yes")
+
+df4 <- df3 %>%
+  filter(!is.na(art_exposure))
+
+df5 <- df4 %>%
+  filter(art_exposure == "Yes")
+
+df6 <- df5 %>% 
+  filter(!is.na(problem_meds_transport))
+
+df7 <- df4 %>%
+  filter(art_exposure == "No")
+
+df8 <- df7 %>%
+  filter(!is.na(not_taking_arv_cd4high))
+```
+
+# **DRAFT REPORT**
+
+## General notes
+
+If you would like to use one of these tables in a word document, all you need to do is: 1 highlight the whole table; 2. copy it; 3. Move your cursor to the spot you want the table in your word document, and then; 4. "paste special" in the Edit menu, and; 5. choose "formatted text". This will paste the table into the document and you will be able to edit the tables as you see fit. If the format looks a lot weirder than the html version, sometimes it helps to copy and paste from a different browser. For me it works well to copy and paste from Safari and Firefox.<br>
+
+If you see "NaN" present in some of the tables, this is just an automated output that means the estimate could not be calculated. Usually it is because there were no observations in that particular cell. These can easily be replaced with a missing value or "0" in the manuscript. 
+
+<br>
+
+## Notes about variables
+
+**HIV positive** The basis for this analysis is among HIV positive participants. In the original data 4 participants had discrepant HIV lab results. Three had missing viral load, and were classified as negative. One had a viral load greater than 1000 and was classified as positive. All together there were `r nrow(df1)` HIV positive AGYW (according to `hiv_final_wb` variable). <br>
+
+<br>
+
+**HIV knowledge** Participants were classified as having knowledge of being HIV+ if they declared they were HIV+ in either of the `hiv_result` or `hiv_status` variables. Moreover, they were assumed to have knowledge of their status if a lab test confirmed they were positive (`hiv_final_wb`) and ARV metabolytes were present in their blood (`art_exposure`). Some participants said they were HIV+ for the `hiv_result` variable and on the `hiv_status` variable they were: 1. HIV- (n = 19), 2. Did not know their result (n = 5), or 3. Preferred not to say (n = 4). Other participants said they were HIV+ on the `hiv_status` variable and on the `hiv_result` variable they were: 1. HIV- (n = 30), 2. Did not get the result (n = 2), or 3. Preferred not to say (n = 5). In all of these instances they would have
+been assumed to self-report being HIV+ (i.e. We assumed they had knowledge of their status). This is relevant because some of the AGYW were not asked questions that were summarised below in figures (e.g. Figure 3, Factors that make going to the clinic easier), simply because they answered "No/I did not get my result/Prefer not to say" to the `hiv_result` question, though they said they were positive on the `hiv_status` question. <br>
+
+<br>
+
+**ART status** Participants were considered to be on ART if they had tested positive for having ARV metabolytes detected in their blood. <br>
+
+<br>
+
+**Socio-economic status** is a variable I created for other HERStory analyses with guidance from Carl Lombard. It was created by classifying all participants (using a machine learning algorithm) into these two groups based upon their responses to a number of other SES-related questions (e.g. asset ownership, money, saving, etc.). I should emphasise that these categories are not based on any external measure of what it means to be low versus high SES. These categories are only relative to the other participants in this dataset <br>
+
+<br>
+
+**Wellbeing score** For the wellbeing score, the possible range is from 8 - 56. Cronbach’s Alpha was calculated for the Wellbeing score, which was composed of the variables, which were all reverse scored: `wellbeing_purpose` (1-7), `wellbeing_social` (1-7), `wellbeing_competent` (1-7), `wellbeing_contribute` (1-7), `wellbeing_engaged` (1-7), `wellbeing_future` (1-7), `wellbeing_good` (1-7), `wellbeing_respect` (1-7). The alpha was 0.78. <br>
+
+<br>
+
+**Resilience score** For the resilience score, the possible range is from 0 - 40. Cronbach’s Alpha was calculated for the Resilience score, which was composed of the variables: `adapt` (0-4), `deal` (0-4), `funny_side` (0-4), `cope` (0-4), `bounce` (0-4), `goals` (0-4), `pressure` (0-4), `discouraged` (0-4), `strong` (0-4), and `handle` (0-4). The alpha was 0.83. <br>
+
+<br>
+
+**Social support scores** Social support scores were measured with the Multidimensional Scale of Percieved Social Support. Average scores ranged from 1-7. Cronbach’s Alpha was calculated for 4 different social support scores. The Family Social Support Score was composed of the variables: `mspss_help` (1-7), `mspss_family` (1-7), `mspss_talk` (1-7), and `mspss_decisions` (1-7). The alpha was 0.85. The Peers Social Support Score was composed of the variables: `mspss_friends` (1-7), `mspss_count_on` (1-7), `mspss_friend_sorrow` (1-7), and `mspss_problems` (1-7). The alpha was 0.88. The Special Person Support Score was composed of the variables: `mspss_special_person` (1-7), `mspss_sorrow` (1-7), `mspss_special` (1-7), and `mspss_feelings` (1-7). The alpha was 0.83. The Overall Support Score was composed of all the previously listed variables. The alpha was 0.91. I have additionally created categorical versions of these scores, that have low, moderate, and high social support categories. Mean scores ranging from 1 to 2.9 could be considered low support; scores of 3 to 5 could be considered moderate support, and a scores from 5.1 to 7 could be considered high support. These are not presented below. <br>
+
+<br>
+
+**HIV stigma score** The stigma score can range from 0 to 6, with the higher the score the more internalized stigma. The questions that comprise this score were only asked for participants that knew their HIV positive status. Thus, we only present this score in the analysis of ART status. Cronbach’s Alpha was calculated for an HIV stigma score among HIV-positive participants. It was composed of the following variables: `difficult` (0/1), `dirty` (0/1), `feel_guilty` (0/1), `feel_ashamed` (0/1), `worthless` (0/1), and `hide` (0/1). The alpha was 0.88. <br>
+
+<br>
+
+**Social capital scores** Cronbach's Alpha was calculated for 3 different social capital scores. The Group Membership Score was composed of the items: `sascat_club` (0/1), `sascat_sports` (0/1), `sascat_youthgroup` (0/1), `sascat_comgroup` (0/1), `sascat_religgroup` (0/1), `sascat_volunteer` (0/1), `sascat_political` (0/1), and `sascat_other` (0/1) . The alpha was 0.08. The Support from Group Score was composed of the items:`sascat_help_club` (0/1), `sascat_help_youthgroup` (0/1), `sascat_help_comgroup` (0/1), `sascat_help_religgroup` (0/1), `sascat_help_volunteer` (0/1), and `sascat_help_political` (0/1). The alpha was 0.07. The Support from Individuals Score was composed of the items: `sascat_support_fam` (0/1), `sascat_support_neighbors` (0/1), `sascat_support_friends` (0/1), `sascat_support_comleaders` (0/1), `sascat_support_relleaders` (0/1), `sascat_support_pol` (0/1), `sascat_support_gov` (0/1), `sascat_support_ngo` (0/1). The alpha was 0.42. <br> The Cronbach Alphas for these scores are not very good. However, these are not proper scale variables. They are merely the sum of the individual components. <br>
+
+<br>
+
+**Gender equity score** A higher gender equity score represents norms reflecting greater gender equity. An individual score can range from 22 to 66. Cronbach’s Alpha was calculated for an overall gender norms score, composed of the following variables: `mandecides` (1-3), `womanrole` (1-3), `mansex` (1-3), `talksex` (1-3), `easy` (1-3), `otherwoman` (1-3), `bearen` (1-3), `resp` (1-3), `avoid` (1-3), `finaldecision` (1-3), `ready` (1-3), `tolerate` (1-3), `hit` (1-3), `hitnosex` (1-3), `gay` (1-3), `couple` (1-3, reverse scored), `suggest` (1-3, reverse scored), `pregnantresp` (1-3, reverse scored), `partner` (1-3, reverse scored), `father` (1-3, reverse scored), `contramanwoman` (1-3, reverse scored), and `friend` (1-3, reverse scored). The alpha was 0.71. <br>
+
+<br>
+
+
+
+# HIV Knowledge bivariate associations
+
+<br>
+
+
+```{r know_status, include = FALSE}
+
+# Proportions knowing status
+
+know_status <- recap_uni_catvar_svy(svydf1, hiv_knowledge)
+
+```
+
+In the HERStory study there were `r nrow(df)` AGYW participants, of which `r nrow(df1)` were HIV positive. Among the HIV positive participants, `r know_status["Yes", "Freq"]` (`r know_status["Yes", "Prop"]`%) knew their status, while `r know_status["No", "Freq"]` (`r know_status["No", "Prop"]`%) did not. 
+
+<br>
+
+```{r hiv_knowledge_tab_setup, include = FALSE}
+
+tab1 <- recap_bi_numvar_svy(svy = svydf1, var = age, byvar = hiv_knowledge)
+tab2 <- recap_bi_catvar_svy(svy = svydf1, var = highestpassed2, byvar = hiv_knowledge)
+tab3 <- recap_bi_catvar_svy(svy = svydf1, var = parents_live_here, byvar = hiv_knowledge)
+tab4 <- recap_bi_catvar_svy(svy = svydf1, var = community, byvar = hiv_knowledge)
+tab5 <- recap_bi_catvar_svy(svy = svydf1, var = health_problem, byvar = hiv_knowledge)
+tab6 <- recap_bi_catvar_svy(svy = svydf1, var = hunger, byvar = hiv_knowledge)
+tab7 <- recap_bi_catvar_svy(svy = svydf1, var = auditCcat, byvar = hiv_knowledge)
+tab8 <- recap_bi_catvar_svy(svy = svydf1, var = duditcat, byvar = hiv_knowledge)
+tab9 <- recap_bi_catvar_svy(svy = svydf2, var = pregever, byvar = hiv_knowledge)
+tab10 <- recap_bi_catvar_svy(svy = svydf1, var = ipv_any, byvar = hiv_knowledge)
+tab11 <- recap_bi_catvar_svy(svy = svydf1, var = ever_raped, byvar = hiv_knowledge)
+tab12 <- recap_bi_numvar_svy(svy = svydf1, var = wellbeing_score, byvar = hiv_knowledge)
+tab13 <- recap_bi_numvar_svy(svy = svydf1, var = resilience_score, byvar = hiv_knowledge)
+tab14 <- recap_bi_numvar_svy(svy = svydf1, var = support_family_score, byvar = hiv_knowledge)
+tab15 <- recap_bi_numvar_svy(svy = svydf1, var = support_peers_score, byvar = hiv_knowledge)
+tab16 <- recap_bi_numvar_svy(svy = svydf1, var = support_specialperson_score, byvar = hiv_knowledge)
+tab17 <- recap_bi_numvar_svy(svy = svydf1, var = group_membership_score, byvar = hiv_knowledge)
+tab18 <- recap_bi_numvar_svy(svy = svydf1, var = support_group_score, byvar = hiv_knowledge)
+tab19 <- recap_bi_numvar_svy(svy = svydf1, var = support_individuals_score, byvar = hiv_knowledge)
+tab20 <- recap_bi_numvar_svy(svy = svydf1, var = gender_equity_score, byvar = hiv_knowledge)
+tab21 <- recap_bi_catvar_svy(svy = svydf1, var = rel_status2, byvar = hiv_knowledge)
+tab22 <- recap_bi_catvar_svy(svy = svydf1, var = bf, byvar = hiv_knowledge)
+tab23 <- recap_bi_catvar_svy(svy = svydf1, var = ever_sex, byvar = hiv_knowledge)
+tab24 <- recap_bi_catvar_svy(svy = svydf1, var = trans_sex, byvar = hiv_knowledge)
+tab25 <- recap_bi_catvar_svy(svy = svydf2, var = partner_older_5, byvar = hiv_knowledge)
+tab26 <- recap_bi_catvar_svy(svy = svydf1, var = condom, byvar = hiv_knowledge)
+tab27 <- recap_bi_catvar_svy(svy = svydf1, var = contraception, byvar = hiv_knowledge)
+tab28 <- recap_bi_catvar_svy(svy = svydf1, var = hiv_test, byvar = hiv_knowledge)
+tab29 <- recap_bi_catvar_svy(svy = svydf4, var = freq_hiv_test, byvar = hiv_knowledge)
+tab30 <- recap_bi_catvar_svy(svy = svydf4, var = result, byvar = hiv_knowledge)
+
+
+hiv_knowledge_tab <- rbind(tab1, tab2, tab3, tab4,
+                     tab5, tab6, tab7, tab8,
+                     tab9, tab10, tab11, tab12,
+                     tab13, tab14, tab15, tab16,
+                     tab17, tab18, tab19, tab20, 
+                     tab21, tab22, tab23, tab24, 
+                     tab25, tab26, tab27, tab28,
+                     tab29, tab30)
+
+
+
+```
+
+```{r hiv_knowledge_tab}
+colnames(hiv_knowledge_tab) <- c("n", "%", "95% CI",
+                           "n", "%", "95% CI",
+                           "n", "%", "95% CI",
+                           "p-value")
+
+cgroup <- rbind(c("", "HIV Knowledge Status", "", NA),
+                c("Overall", "HIV+ Status Unknown", "HIV+ Status Known", ""))
+
+n_cgroup <- rbind(c(1, 2, 1, NA),
+                  c(3, 3, 3, 1))
+
+
+htmlTable(hiv_knowledge_tab,
+          caption = "<b>Factors related to whether an HIV+ AGYW had knowledge of her HIV status<b/>",
+          tfoot = txtMergeLines("CI, Confidence Interval",
+                                "^&dagger;^ 69 AGYW were excluded because they said they never had sex",
+                                "^&dagger;^ ^&dagger;^ 51 AGYW were excluded because they did not ever have an HIV test"),
+          ctable = TRUE,
+          rgroup = c("<b>Age<b>",  
+                     "<b>Highest grade passed<b>", 
+                     "<b>Both parents lived at home<b>",
+                     "<b>Length of time lived in their community<b>",
+                     "<b>Has been to a hospital or clinic in past year for a health problem<b>",  
+                     "<b>In past month, participant or household member went a day and night without eating because of lack of food<b>",
+                     "<b>Had an high alcohol use (Audit-C score 2 or higher)<b>",
+                     "<b>Had high drug use (Dudit score 2 or higher)<b>",
+                     "<b>Ever pregnant ^&dagger;^<b>",
+                     "<b>Experienced any form of IPV<b>",
+                     "<b>Ever forced to have sex or raped<b>",
+                     "<b>Wellbeing score<b>",
+                     "<b>Resilience score<b>",
+                     "<b>Social support from family score<b>",
+                     "<b>Social support from peers score<b>",
+                     "<b>Social support from special person score<b>",
+                     "<b>Group membership score<b>",
+                     "<b>Support from group score<b>",
+                     "<b>Support from individuals score<b>",
+                     "<b>Gender equity score<b>",
+                     "<b>Relationship status<b>",
+                     "<b>Had a boyfriend or partner in the past year<b>",
+                     "<b>Ever had sex<b>",
+                     "<b>Ever had transactional sex<b>",
+                     "<b>In the past year had a sexual partner 5 or more years older ^&dagger;^<b>",
+                     "<b>Accessed male condoms in the past year<b>",
+                     "<b>Accessed a form of contraception (e.g. injection, implant, pill, etc.) in the past year<b>",
+                     "<b>Ever tested for HIV<b>",
+                     "<b>Frequency of HIV testing ^&dagger;^ ^&dagger;^<b>",
+                     "<b>Received HIV test result ^&dagger;^ ^&dagger;^<b>"),
+          n.rgroup = c(nrow(tab1), nrow(tab2), nrow(tab3), nrow(tab4),
+                       nrow(tab5), nrow(tab6), nrow(tab7), nrow(tab8),
+                       nrow(tab9), nrow(tab10), nrow(tab11), nrow(tab12),
+                       nrow(tab13), nrow(tab14), nrow(tab15), nrow(tab16),
+                       nrow(tab17), nrow(tab18), nrow(tab19), nrow(tab20),
+                       nrow(tab21), nrow(tab22), nrow(tab23), nrow(tab24),
+                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28),
+                       nrow(tab29), nrow(tab30)),
+          tspanner = c("<b>Socio-Demographic Factors<b>", "<b>Health and Wellbeing Factors<b>",
+                       "<b>Psycho-Social Factors<b>", "<b>Sexual and Reproductive Health Behaviours<b>",
+                       "<b>HIV Testing Behaviours<b>"),
+          n.tspanner = c(nrow(tab1) + nrow(tab2) + nrow(tab3) + nrow(tab4),
+                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9) + nrow(tab10) + nrow(tab11),
+                         nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19) + nrow(tab20),
+                         nrow(tab21) + nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26) + nrow(tab27),
+                         nrow(tab28) + nrow(tab29) + nrow(tab30)),
+          css.tspanner = "background: lightgrey;",
+          rowlabel = "Variable",
+          css.rgroup = "",
+          cgroup = cgroup,
+          n.cgroup = n_cgroup)
+```
+
+<br>
+<br>
+
+###### **Figure 1. Reasons provided for never having an HIV test before the study, among HIV+ AGYW who had not had a test (n = `r nrow(df2)`).** AGYW could select multiple options
+
+```{r notest_reasons_plot_setup, include = FALSE}
+
+# Variables that need to be summarised for the plot
+reason_vars <- c("reason_no_test_knowhere", "reason_no_test_donthave", "reason_no_test_norisk",
+                 "reason_no_test_trust", "reason_no_test_afraid", "reason_no_test_notready",
+                 "reason_no_test_confidence", "reason_no_test_stigma", "reason_no_test_losejob",
+                 "reason_no_test_standard", "reason_no_test_notime", "reason_no_test_other2")
+
+notest_reasons_tab <- map_dfr(.x = set_names(reason_vars), 
+                              .f = recap_uni_catvar_svy_forplots, # Custom function
+                              .id = "cat",
+                              svy = svydf5) %>%
+  filter(n > 0)
+  
+```
+
+
+```{r notest_reasons_plot}
+
+notest_reasons_tab %>%
+  ggplot(aes(x = fct_reorder(cat, prop), y = prop)) +
+  geom_col(fill = "cyan4") +
+  geom_errorbar(aes(ymin = prop_low, ymax = prop_upp), 
+                width = 0.2) +
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+            size = 3) +
+  scale_x_discrete(labels = c("reason_no_test_knowhere" = "Don't know where to get tested",
+                              "reason_no_test_donthave" = "Don't think I have HIV",
+                              "reason_no_test_norisk" = "Not at risk for HIV",
+                              "reason_no_test_trust" = "I trust my partner",
+                              "reason_no_test_afraid" = "Afraid to find out I am HIV+",
+                              "reason_no_test_notready" = "Not ready to have a test",
+                              "reason_no_test_stigma" = "Concerns about stigma or discrimination",
+                              "reason_no_test_losejob" = "Concerns about losing my job",
+                              "reason_no_test_notime" = "Have not gotten around to it",
+                              "reason_no_test_other2" = "Other")) + 
+  xlab("") +
+  ylab("Proportion") +
+  coord_flip() + 
+  theme_bw() 
+
+```
+
+<br>
+<br>
+
+# ART Status bivariate associations
+<br>
+<br>
+
+```{r art_status, include = FALSE}
+
+# Proportions on ART
+
+art_status <- recap_uni_catvar_svy(svydf6, art_exposure)
+
+```
+
+Among the `r nrow(df3)` AGYW participants who knew their HIV+ status, `r nrow(df3) - nrow(df4)` had missing ART status information and thus were removed from the analysis. Of the remaining participants (n = `r nrow(df4)`), `r art_status["Yes", "Freq"]` (`r art_status["Yes", "Prop"]`%) had ART metabolytes detected in their blood, and thus are considered to be on ART. 
+
+<br>
+
+```{r art_tab_setup, include = FALSE}
+
+tab1 <- recap_bi_numvar_svy(svy = svydf6, var = age, byvar = art_exposure)
+tab2 <- recap_bi_catvar_svy(svy = svydf6, var = highestpassed2, byvar = art_exposure)
+tab3 <- recap_bi_catvar_svy(svy = svydf6, var = parents_live_here, byvar = art_exposure)
+tab4 <- recap_bi_catvar_svy(svy = svydf6, var = community, byvar = art_exposure)
+tab5 <- recap_bi_catvar_svy(svy = svydf6, var = health_problem, byvar = art_exposure)
+tab6 <- recap_bi_catvar_svy(svy = svydf6, var = hunger, byvar = art_exposure)
+tab7 <- recap_bi_catvar_svy(svy = svydf6, var = auditCcat, byvar = art_exposure)
+tab8 <- recap_bi_catvar_svy(svy = svydf6, var = duditcat, byvar = art_exposure)
+tab9 <- recap_bi_catvar_svy(svy = svydf7, var = pregever, byvar = art_exposure)
+tab10 <- recap_bi_catvar_svy(svy = svydf6, var = ipv_any, byvar = art_exposure)
+tab11 <- recap_bi_catvar_svy(svy = svydf6, var = ever_raped, byvar = art_exposure)
+tab12 <- recap_bi_numvar_svy(svy = svydf6, var = wellbeing_score, byvar = art_exposure)
+tab13 <- recap_bi_numvar_svy(svy = svydf6, var = resilience_score, byvar = art_exposure)
+tab14 <- recap_bi_numvar_svy(svy = svydf6, var = support_family_score, byvar = art_exposure)
+tab15 <- recap_bi_numvar_svy(svy = svydf6, var = support_peers_score, byvar = art_exposure)
+tab16 <- recap_bi_numvar_svy(svy = svydf6, var = support_specialperson_score, byvar = art_exposure)
+tab17 <- recap_bi_numvar_svy(svy = svydf6, var = group_membership_score, byvar = art_exposure)
+tab18 <- recap_bi_numvar_svy(svy = svydf6, var = support_group_score, byvar = art_exposure)
+tab19 <- recap_bi_numvar_svy(svy = svydf6, var = support_individuals_score, byvar = art_exposure)
+tab20 <- recap_bi_numvar_svy(svy = svydf6, var = gender_equity_score, byvar = art_exposure)
+tab21 <- recap_bi_numvar_svy(svy = svydf6, var = stigma_hivpos, byvar = art_exposure)
+tab22 <- recap_bi_catvar_svy(svy = svydf6, var = rel_status2, byvar = art_exposure)
+tab23 <- recap_bi_catvar_svy(svy = svydf6, var = bf, byvar = art_exposure)
+tab24 <- recap_bi_catvar_svy(svy = svydf6, var = ever_sex, byvar = art_exposure)
+tab25 <- recap_bi_catvar_svy(svy = svydf6, var = trans_sex, byvar = art_exposure)
+tab26 <- recap_bi_catvar_svy(svy = svydf7, var = partner_older_5, byvar = art_exposure)
+tab27 <- recap_bi_catvar_svy(svy = svydf6, var = condom, byvar = art_exposure)
+tab28 <- recap_bi_catvar_svy(svy = svydf6, var = contraception, byvar = art_exposure)
+tab29 <- recap_bi_catvar_svy(svy = svydf6, var = hiv_recent, byvar = art_exposure)
+tab30 <- recap_bi_catvar_svy(svy = svydf9, var = miss_app, byvar = art_exposure)
+
+
+
+art_tab <- rbind(tab1, tab2, tab3, tab4,
+                     tab5, tab6, tab7, tab8,
+                     tab9, tab10, tab11, tab12,
+                     tab13, tab14, tab15, tab16,
+                     tab17, tab18, tab19, tab20, 
+                     tab21, tab22, tab23, tab24, 
+                     tab25, tab26, tab27, tab28, 
+                     tab29, tab30)
+
+
+
+```
+
+```{r art_tab}
+colnames(art_tab) <- c("n", "%", "95% CI",
+                           "n", "%", "95% CI",
+                           "n", "%", "95% CI",
+                           "p-value")
+
+cgroup <- rbind(c("", "ART Status", "", NA),
+                c("Overall", "Not on ART", "On ART", ""))
+
+n_cgroup <- rbind(c(1, 2, 1, NA),
+                  c(3, 3, 3, 1))
+
+
+htmlTable(art_tab,
+          caption = "<b>Factors related to whether an HIV+ who had knowledge of her status, was on ART<b/>",
+          tfoot = txtMergeLines("CI, Confidence Interval",
+                                "^&dagger;^ 43 AGYW were excluded because they said they never had sex",
+                                "^&dagger;^ ^&dagger;^ 87 AGYW were excluded because they had missing observations for this question"),
+          ctable = TRUE,
+          rgroup = c("<b>Age<b>",  
+                     "<b>Highest grade passed<b>", 
+                     "<b>Both parents lived at home<b>",
+                     "<b>Length of time lived in their community<b>",
+                     "<b>Has been to a hospital or clinic in past year for a health problem<b>",  
+                     "<b>In past month, participant or household member went a day and night without eating because of lack of food<b>",
+                     "<b>Had an high alcohol use (Audit-C score 2 or higher)<b>",
+                     "<b>Had high drug use (Dudit score 2 or higher)<b>",
+                     "<b>Ever pregnant ^&dagger;^<b>",
+                     "<b>Experienced any form of IPV<b>",
+                     "<b>Ever forced to have sex or raped<b>",
+                     "<b>Wellbeing score<b>",
+                     "<b>Resilience score<b>",
+                     "<b>Social support from family score<b>",
+                     "<b>Social support from peers score<b>",
+                     "<b>Social support from special person score<b>",
+                     "<b>Group membership score<b>",
+                     "<b>Support from group score<b>",
+                     "<b>Support from individuals score<b>",
+                     "<b>Gender equity score<b>",
+                     "<b>HIV stigma score<b>",
+                     "<b>Relationship status<b>",
+                     "<b>Had a boyfriend or partner in the past year<b>",
+                     "<b>Ever had sex<b>",
+                     "<b>Ever had transactional sex<b>",
+                     "<b>In the past year had a sexual partner 5 or more years older ^&dagger;^<b>",
+                     "<b>Accessed male condoms in the past year<b>",
+                     "<b>Accessed a form of contraception (e.g. injection, implant, pill, etc.) in the past year<b>",
+                     "<b>Recent HIV infection<b>",
+                     "<b>Missed clinic appointments in the past year ^&dagger;^ ^&dagger;^<b>"),
+          n.rgroup = c(nrow(tab1), nrow(tab2), nrow(tab3), nrow(tab4),
+                       nrow(tab5), nrow(tab6), nrow(tab7), nrow(tab8),
+                       nrow(tab9), nrow(tab10), nrow(tab11), nrow(tab12),
+                       nrow(tab13), nrow(tab14), nrow(tab15), nrow(tab16),
+                       nrow(tab17), nrow(tab18), nrow(tab19), nrow(tab20),
+                       nrow(tab21), nrow(tab22), nrow(tab23), nrow(tab24),
+                       nrow(tab25), nrow(tab26), nrow(tab27), nrow(tab28),
+                       nrow(tab29), nrow(tab30)),
+           tspanner = c("<b>Socio-Demographic Factors<b>", "<b>Health and Wellbeing Factors<b>",
+                       "<b>Psycho-Social Factors<b>", "<b>Sexual and Reproductive Health Behaviours<b>",
+                       "<b>HIV-Related Factors<b>"),
+          n.tspanner = c(nrow(tab1) + nrow(tab2) + nrow(tab3) + nrow(tab4),
+                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9) + nrow(tab10) + nrow(tab11),
+                         nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19) + nrow(tab20) + nrow(tab21),
+                         nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26) + nrow(tab27) + nrow(tab28),
+                         nrow(tab29) + nrow(tab30)),
+          css.tspanner = "background: lightgrey;",
+          rowlabel = "Variable",
+          css.rgroup = "",
+          cgroup = cgroup,
+          n.cgroup = n_cgroup)
+```
+
+<br>
+<br>
+
+I was originally going to stratify Figures 2 and 3 by ART status, but decided not to because there were so few observations among those who were not on ART, plus a lot of additional missingness. 
+
+<br>
+<br>
+
+###### **Figure 2. Problems in going to the clinic for HIV care.** This is among HIV+ AGYW who knew they were HIV+ and they were on ART (n = `r nrow(df5)`). An additional `r nrow(df5) - nrow(df6)` AGYW were excluded because they had missing information for these variables (n = `r nrow(df6)`). AGYW could select multiple options.
+
+```{r problem_meds_plot_setup, include = FALSE}
+
+# Variables that need to be summarised for the plot
+problem_vars <- c("problem_meds_transport", "problem_meds_distance", "problem_meds_hours",
+                 "problem_meds_queues", "problem_meds_staff", "problem_meds_seeme",
+                 "problem_meds_none", "problem_meds_other2")
+
+problem_meds_tab <- map_dfr(.x = set_names(problem_vars), 
+                            .f = recap_uni_catvar_svy_forplots, # Custom function
+                            .id = "cat",
+                            svy = svydf10) 
+  
+```
+
+
+```{r problem_meds_plot}
+
+problem_meds_tab %>%
+  ggplot(aes(x = fct_reorder(cat, prop), y = prop)) +
+  geom_col(fill = "cyan4") +
+  geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
+                width = 0.2) +
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+            size = 3) +
+  scale_x_discrete(labels = c("problem_meds_transport" = "Transport problems",
+                              "problem_meds_distance" = "Long distance to travel",
+                              "problem_meds_hours" = "Clinic only open during school/work hours",
+                              "problem_meds_queues" = "Clinic has long waiting queues",
+                              "problem_meds_staff" = "I don't like how clinic staff treat me",
+                              "problem_meds_seeme" = "I'm scared someone will notice me",
+                              "problem_meds_none" = "I don't have anyone to take me",
+                              "problem_meds_other2" = "Other")) + 
+  xlab("") +
+  ylab("Proportion") +
+  coord_flip() + 
+  theme_bw() 
+
+```
+
+<br>
+<br>
+
+###### **Figure 3. Factors that make going to the clinic easier.** This is among HIV+ AGYW who knew they were HIV+ and they were on ART (n = `r nrow(df5)`). An additional `r nrow(df5) - nrow(df6)` AGYW were excluded because they had missing information for these variables (n = `r nrow(df6)`). AGYW could select multiple options.
+
+```{r easy_clinic_app_plot_setup, include = FALSE}
+
+# Variables that need to be summarised for the plot
+easy_vars <- c("easy_clinic_app_transport", "easy_clinic_app_close", "easy_clinic_app_school",
+                 "easy_clinic_app_queues", "easy_clinic_app_staff", "easy_clinic_app_parent",
+                 "easy_clinic_app_friends", "easy_clinic_app_nohelp", "easy_clinic_app_other")
+
+easy_clinic_app_tab <- map_dfr(.x = set_names(easy_vars), 
+                            .f = recap_uni_catvar_svy_forplots, # Custom function
+                            .id = "cat",
+                            svy = svydf10) 
+  
+```
+
+
+```{r easy_clinic_app_plot}
+
+easy_clinic_app_tab %>%
+  ggplot(aes(x = fct_reorder(cat, prop), y = prop)) +
+  geom_col(fill = "cyan4") +
+  geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
+                width = 0.2) +
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+            size = 3) +
+  scale_x_discrete(labels = c("easy_clinic_app_transport" = "Having transport to clinic",
+                              "easy_clinic_app_close" = "Clinic is close by",
+                              "easy_clinic_app_school" = "School/work gives me time off to attend appointments",
+                              "easy_clinic_app_queues" = "Clinic has short queues",
+                              "easy_clinic_app_staff" = "Staff treat me well",
+                              "easy_clinic_app_parent" = "Caregiver comes with me to the clinic",
+                              "easy_clinic_app_friends" = "Friends or family support me in going to the clinic",
+                              "easy_clinic_app_nohelp" = "I don't get help",
+                              "easy_clinic_app_other2" = "Other")) + 
+  xlab("") +
+  ylab("Proportion") +
+  coord_flip() + 
+  theme_bw() 
+
+```
+
+<br>
+<br>
+
+###### **Figure 4. Reasons for not taking ART.** This is among HIV+ AGYW who knew they were HIV+ and they were not on ART (n = `r nrow(df7)`). An additional `r nrow(df7) - nrow(df8)` AGYW were excluded because they had missing information for these variables (n = `r nrow(df8)`). AGYW could select multiple options.
+
+```{r not_taking_arv_plot_setup, include = FALSE}
+
+# Variables that need to be summarised for the plot
+not_arv_vars <- c("not_taking_arv_cd4high", "not_taking_arv_findout", "not_taking_arv_thm",
+                 "not_taking_arv_notlike", "not_taking_arv_noneed", "not_taking_arv_healthy",
+                 "not_taking_arv_other1", "not_taking_arv_other2", "not_taking_arv_other4")
+
+not_taking_arv_tab <- map_dfr(.x = set_names(not_arv_vars), 
+                            .f = recap_uni_catvar_svy_forplots, # Custom function
+                            .id = "cat",
+                            svy = svydf11) %>%
+  filter(n > 0)
+  
+```
+
+
+```{r not_taking_arv_plot}
+
+not_taking_arv_tab %>%
+  ggplot(aes(x = fct_reorder(cat, prop), y = prop)) +
+  geom_col(fill = "cyan4") +
+  geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
+                width = 0.2) +
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+            size = 3) +
+  scale_x_discrete(labels = c("not_taking_arv_cd4high" = "My CD4 count is high",
+                              "not_taking_arv_findout" = "I'm scared people I live with will find out",
+                              "not_taking_arv_noneed" = "I don't need them",
+                              "not_taking_arv_healthy" = "I feel healthy",
+                              "not_taking_arv_other4" = "Other")) + 
+  xlab("") +
+  ylab("Proportion") +
+  coord_flip() + 
+  theme_bw() 
+
+```
+
+<br>
+
+# HIV Knowledge Models
+
+<br>
+<br>
+
+```{r hiv_knowledge_models_setup, include = FALSE}
+m1 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + wellbeing_score, 
+             design = svydf1,
+             family = "binomial")
+
+m2 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + resilience_score, 
+             design = svydf1,
+             family = "binomial")
+
+m3 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_family_score, 
+             design = svydf1,
+             family = "binomial")
+
+m4 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_peers_score, 
+             design = svydf1,
+             family = "binomial")
+
+m5 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_specialperson_score, 
+             design = svydf1,
+             family = "binomial")
+
+m6 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + group_membership_score, 
+             design = svydf1,
+             family = "binomial")
+
+m7 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_group_score, 
+             design = svydf1,
+             family = "binomial")
+
+m8 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + support_individuals_score, 
+             design = svydf1,
+             family = "binomial")
+
+m9 <- svyglm(hiv_knowledge ~ age + highestpassed2 + community + gender_equity_score, 
+             design = svydf1,
+             family = "binomial")
+
+```
+
+```{r hiv_knowledge_models}
+
+pred_labels <- c(age = "Age",
+                 highestpassed2Secondary = "Highest grade acheived: Secondary",
+                 `highestpassed2Some Post-Secondary` = "Highest grade acheived: Some post-secondary",
+                 Always = "Length of time in community: Always",
+                 `communityMore than 5 years` = "Length of time in community: More than 5 years",
+                 `community1-5 years` = "Length of time in community: 1-5 years",
+                 wellbeing_score = "Wellbeing",
+                 resilience_score = "Resillience",
+                 support_family_score = "Support from family",
+                 support_peers_score = "Support from peers",
+                 support_specialperson_score = "Support from a special person",
+                 group_membership_score = "Cognitive social capital: group membership",
+                 support_group_score = "Cognitive social capital: support from groups",
+                 support_individuals_score = "Cognitive social capital: support from individuals",
+                 gender_equity_score = "Gender equity norms")
+ 
+tab_model(m1, m2, m3, m4, m5, m6, m7, m8, m9,
+          title = "Relationship between psycho-social constructs and knowledge of HIV status, among HIV+ AGYW (n = 568)",
+          show.p = FALSE,
+          show.intercept = FALSE,
+          show.r2 = FALSE,
+          collapse.ci = TRUE,
+          pred.labels =  pred_labels,
+          # show.reflvl = TRUE, 
+          # prefix.labels = "varname",
+          dv.labels = c("Model 1", "Model 2", "Model 3", "Model 4",
+                        "Model 5", "Model 6", "Model 7", "Model 8",
+                        "Model 9"),
+          CSS = list(css.caption = 'font-weight: bold; color:black;',
+                     css.thead = 'font-weight: bold;',
+                     css.firsttablecol = 'font-weight: bold;',
+                     css.depvarhead = '+font-weight: bold;'))
+```
+
+<br>
+<br>
+
+All of these models adjust for age, education, and length of time in the community since they are all confounders of the relationship between individual psycho-social constructs and the outcomes. Please let me know if you think of any confounders that we should also adjust for (remember they should have a known relationship with the construct, outcome, and not be mediators). In the final table we present in the manuscript, i'll remove the confounders (will still adjust for them), and collapse all these models into one column, as they do in Katz et al. Table 3. So there will be one column for the models that have HIV knowledge as an outcome, and one column for the models that have ART status as an outcome. <br>
+
+One example for how you would interpret these results is for the support from peers score. After adjusting for confounders, a 1-unit increase in support from peers results in a reduced liklihood of knowing one's HIV positive status (aOR: `r round(tidy(m4, exponentiate = TRUE)$estimate[7], 2)`). On the other hand, a 1-unit increase in support from a "special person", increases the AGYW's odds of knowing her status by `r round((tidy(m5, exponentiate = TRUE)$estimate[7]) - 1.00, 2) * 100`%.
+
+<br>
+<br>
+
+# ART Status Models
+
+<br>
+<br>
+
+```{r art_models_setup, include = FALSE}
+m1 <- svyglm(art_exposure ~ age + highestpassed2 + community + wellbeing_score, 
+             design = svydf6,
+             family = "binomial")
+
+m2 <- svyglm(art_exposure ~ age + highestpassed2 + community + resilience_score, 
+             design = svydf6,
+             family = "binomial")
+
+m3 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_family_score, 
+             design = svydf6,
+             family = "binomial")
+
+m4 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_peers_score, 
+             design = svydf6,
+             family = "binomial")
+
+m5 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_specialperson_score, 
+             design = svydf6,
+             family = "binomial")
+
+m6 <- svyglm(art_exposure ~ age + highestpassed2 + community + group_membership_score, 
+             design = svydf6,
+             family = "binomial")
+
+m7 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_group_score, 
+             design = svydf6,
+             family = "binomial")
+
+m8 <- svyglm(art_exposure ~ age + highestpassed2 + community + support_individuals_score, 
+             design = svydf6,
+             family = "binomial")
+
+m9 <- svyglm(art_exposure ~ age + highestpassed2 + community + gender_equity_score, 
+             design = svydf6,
+             family = "binomial")
+
+m10 <- svyglm(art_exposure ~ age + highestpassed2 + community + stigma_hivpos, 
+             design = svydf6,
+             family = "binomial")
+
+```
+
+```{r art_models}
+
+pred_labels <- c(age = "Age",
+                 highestpassed2Secondary = "Highest grade acheived: Secondary",
+                 `highestpassed2Some Post-Secondary` = "Highest grade acheived: Some post-secondary",
+                 Always = "Length of time in community: Always",
+                 `communityMore than 5 years` = "Length of time in community: More than 5 years",
+                 `community1-5 years` = "Length of time in community: 1-5 years",
+                 wellbeing_score = "Wellbeing",
+                 resilience_score = "Resillience",
+                 support_family_score = "Support from family",
+                 support_peers_score = "Support from peers",
+                 support_specialperson_score = "Support from a special person",
+                 group_membership_score = "Cognitive social capital: group membership",
+                 support_group_score = "Cognitive social capital: support from groups",
+                 support_individuals_score = "Cognitive social capital: support from individuals",
+                 gender_equity_score = "Gender equity norms",
+                 stigma_hivpos = "HIV Stigma")
+ 
+tab_model(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
+          title = "Relationship between psycho-social constructs and being on ART, among HIV+ AGYW who knew their status (n = 356)",
+          show.p = FALSE,
+          show.intercept = FALSE,
+          show.r2 = FALSE,
+          collapse.ci = TRUE,
+          pred.labels =  pred_labels,
+          # show.reflvl = TRUE, 
+          # prefix.labels = "varname",
+          dv.labels = c("Model 1", "Model 2", "Model 3", "Model 4",
+                        "Model 5", "Model 6", "Model 7", "Model 8",
+                        "Model 9", "Model 10"),
+          CSS = list(css.caption = 'font-weight: bold; color:black;',
+                     css.thead = 'font-weight: bold;',
+                     css.firsttablecol = 'font-weight: bold;',
+                     css.depvarhead = '+font-weight: bold;'))
+```
+
+<br>
+<br>
+
+Only model two has a significant association between one of the constructs and being on ART. For each unit increase in resilience, there was a `r round(( tidy(m2, exponentiate = TRUE)$estimate[7]) - 1.00, 2) * 100`% increase in the odds of being on ART, after adjusting for confounders. 
