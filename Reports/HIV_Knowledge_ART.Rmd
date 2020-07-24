@@ -747,7 +747,7 @@ not_taking_arv_tab %>%
   geom_col(fill = "cyan4") +
   geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
                 width = 0.2) +
-  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%, (n = ", n, ")")),
             size = 3) +
   scale_x_discrete(labels = c("not_taking_arv_cd4high" = "My CD4 count is high",
                               "not_taking_arv_findout" = "I'm scared people I live with will find out",
