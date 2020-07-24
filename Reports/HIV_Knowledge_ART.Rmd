@@ -206,6 +206,110 @@ been assumed to self-report being HIV+ (i.e. We assumed they had knowledge of th
 
 <br>
 
+# Participant characteristics
+
+```{r part_tab_setup, include = FALSE}
+
+tab1 <- recap_uni_catvar_svy(svy = svydf1, var = age_cat)
+tab2 <- recap_uni_catvar_svy(svy = svydf1, var = highestpassed2)
+tab3 <- recap_uni_catvar_svy(svy = svydf1, var = parents_live_here)
+tab4 <- recap_uni_catvar_svy(svy = svydf1, var = community)
+tab5 <- recap_uni_catvar_svy(svy = svydf1, var = health_problem)
+tab6 <- recap_uni_catvar_svy(svy = svydf1, var = hunger)
+tab7 <- recap_uni_catvar_svy(svy = svydf2, var = pregever)
+tab8 <- recap_uni_catvar_svy(svy = svydf1, var = ipv_any)
+tab9 <- recap_uni_catvar_svy(svy = svydf1, var = ever_raped)
+tab10 <- recap_uni_numvar_svy(svy = svydf1, var = wellbeing_score)
+tab11 <- recap_uni_numvar_svy(svy = svydf1, var = resilience_score)
+tab12 <- recap_uni_numvar_svy(svy = svydf1, var = support_family_score)
+tab13 <- recap_uni_numvar_svy(svy = svydf1, var = support_peers_score)
+tab14 <- recap_uni_numvar_svy(svy = svydf1, var = support_specialperson_score)
+tab15 <- recap_uni_numvar_svy(svy = svydf1, var = group_membership_score)
+tab16 <- recap_uni_numvar_svy(svy = svydf1, var = support_group_score)
+tab17 <- recap_uni_numvar_svy(svy = svydf1, var = support_individuals_score)
+tab18 <- recap_uni_numvar_svy(svy = svydf1, var = gender_equity_score)
+tab19 <- recap_uni_numvar_svy(svy = svydf1, var = stigma_hivpos)
+tab20 <- recap_uni_catvar_svy(svy = svydf1, var = rel_status2)
+tab21 <- recap_uni_catvar_svy(svy = svydf1, var = bf)
+tab22 <- recap_uni_catvar_svy(svy = svydf1, var = ever_sex)
+tab23 <- recap_uni_catvar_svy(svy = svydf1, var = trans_sex)
+tab24 <- recap_uni_catvar_svy(svy = svydf2, var = partner_older_5)
+tab25 <- recap_uni_catvar_svy(svy = svydf1, var = condom)
+tab26 <- recap_uni_catvar_svy(svy = svydf1, var = contraception)
+tab27 <- recap_uni_catvar_svy(svy = svydf1, var = hiv_recent)
+
+
+
+
+part_tab <- rbind(tab1, tab2, tab3, tab4,
+                     tab5, tab6, tab7, tab8,
+                     tab9, tab10, tab11, tab12,
+                     tab13, tab14, tab15, tab16,
+                     tab17, tab18, tab19, tab20, 
+                     tab21, tab22, tab23, tab24, 
+                     tab25, tab26, tab27)
+
+
+
+```
+
+```{r part_tab}
+
+htmlTable(part_tab,
+          caption = "<b>Participant characteristics for HIV+ AGYW<b/>",
+          tfoot = txtMergeLines("CI, Confidence Interval",
+                                "^&dagger;^ 69 AGYW were excluded because they said they never had sex"),
+          ctable = TRUE,
+          rgroup = c("<b>Age<b>",  
+                     "<b>Highest grade passed<b>", 
+                     "<b>Both parents lived at home<b>",
+                     "<b>Length of time lived in their community<b>",
+                     "<b>Has been to a hospital or clinic in past year for a health problem<b>",  
+                     "<b>In past month, participant or household member went a day and night without eating because of lack of food<b>",
+                     "<b>Ever pregnant ^&dagger;^<b>",
+                     "<b>Experienced any form of IPV<b>",
+                     "<b>Ever forced to have sex or raped<b>",
+                     "<b>Wellbeing score<b>",
+                     "<b>Resilience score<b>",
+                     "<b>Social support from family score<b>",
+                     "<b>Social support from peers score<b>",
+                     "<b>Social support from special person score<b>",
+                     "<b>Group membership score<b>",
+                     "<b>Support from group score<b>",
+                     "<b>Support from individuals score<b>",
+                     "<b>Gender equity score<b>",
+                     "<b>HIV stigma score<b>",
+                     "<b>Relationship status<b>",
+                     "<b>Had a boyfriend or partner in the past year<b>",
+                     "<b>Ever had sex<b>",
+                     "<b>Ever had transactional sex<b>",
+                     "<b>In the past year had a sexual partner 5 or more years older ^&dagger;^<b>",
+                     "<b>Accessed male condoms in the past year<b>",
+                     "<b>Accessed a form of contraception (e.g. injection, implant, pill, etc.) in the past year<b>",
+                     "<b>Recent HIV infection<b>"),
+          n.rgroup = c(nrow(tab1), nrow(tab2), nrow(tab3), nrow(tab4),
+                       nrow(tab5), nrow(tab6), nrow(tab7), nrow(tab8),
+                       nrow(tab9), nrow(tab10), nrow(tab11), nrow(tab12),
+                       nrow(tab13), nrow(tab14), nrow(tab15), nrow(tab16),
+                       nrow(tab17), nrow(tab18), nrow(tab19), nrow(tab20),
+                       nrow(tab21), nrow(tab22), nrow(tab23), nrow(tab24),
+                       nrow(tab25), nrow(tab26), nrow(tab27)),
+           tspanner = c("<b>Socio-Demographic Factors<b>", "<b>Health and Wellbeing Factors<b>",
+                       "<b>Psycho-Social Factors<b>", "<b>Sexual and Reproductive Health Behaviours<b>",
+                       "<b>HIV-Related Factors<b>"),
+          n.tspanner = c(nrow(tab1) + nrow(tab2) + nrow(tab3) + nrow(tab4),
+                         nrow(tab5) + nrow(tab6) + nrow(tab7) + nrow(tab8) + nrow(tab9),
+                         nrow(tab10) + nrow(tab11) + nrow(tab12) + nrow(tab13) + nrow(tab14) + nrow(tab15) + nrow(tab16) + nrow(tab17) + nrow(tab18) + nrow(tab19),
+                         nrow(tab20) + nrow(tab21) + nrow(tab22) + nrow(tab23) + nrow(tab24) + nrow(tab25) + nrow(tab26),
+                         nrow(tab27)),
+          css.tspanner = "background: lightgrey;",
+          rowlabel = "Variable",
+          css.rgroup = "")
+```
+
+<br>
+<br>
+
 
 
 # HIV Knowledge bivariate associations
@@ -534,12 +638,13 @@ I was originally going to stratify Figures 2 and 3 by ART status, but decided no
 # Variables that need to be summarised for the plot
 problem_vars <- c("problem_meds_transport", "problem_meds_distance", "problem_meds_hours",
                  "problem_meds_queues", "problem_meds_staff", "problem_meds_seeme",
-                 "problem_meds_none", "problem_meds_other2")
+                 "problem_meds_none", "problem_meds_other1", "problem_meds_other2")
 
 problem_meds_tab <- map_dfr(.x = set_names(problem_vars), 
                             .f = recap_uni_catvar_svy_forplots, # Custom function
                             .id = "cat",
-                            svy = svydf10) 
+                            svy = svydf10) %>%
+  mutate(across(starts_with("prop"), as.numeric))
   
 ```
 
@@ -551,7 +656,7 @@ problem_meds_tab %>%
   geom_col(fill = "cyan4") +
   geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
                 width = 0.2) +
-  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+  geom_text(aes(y = prop_upp + 5, label = paste0(format(prop, nsmall = 1), "% (n = ", n, ")")),
             size = 3) +
   scale_x_discrete(labels = c("problem_meds_transport" = "Transport problems",
                               "problem_meds_distance" = "Long distance to travel",
@@ -559,7 +664,8 @@ problem_meds_tab %>%
                               "problem_meds_queues" = "Clinic has long waiting queues",
                               "problem_meds_staff" = "I don't like how clinic staff treat me",
                               "problem_meds_seeme" = "I'm scared someone will notice me",
-                              "problem_meds_none" = "I don't have anyone to take me",
+                              "problem_meds_other1" = "I don't have anyone to take me",
+                              "problem_meds_none" = "I have no problems",
                               "problem_meds_other2" = "Other")) + 
   xlab("") +
   ylab("Proportion") +
@@ -595,7 +701,7 @@ easy_clinic_app_tab %>%
   geom_col(fill = "cyan4") +
   geom_errorbar(aes(ymin = prop_low, ymax = prop_upp),
                 width = 0.2) +
-  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "%")),
+  geom_text(aes(y = prop_upp + 5, label = paste0(prop, "% (n = ", n, ")")),
             size = 3) +
   scale_x_discrete(labels = c("easy_clinic_app_transport" = "Having transport to clinic",
                               "easy_clinic_app_close" = "Clinic is close by",
@@ -605,7 +711,7 @@ easy_clinic_app_tab %>%
                               "easy_clinic_app_parent" = "Caregiver comes with me to the clinic",
                               "easy_clinic_app_friends" = "Friends or family support me in going to the clinic",
                               "easy_clinic_app_nohelp" = "I don't get help",
-                              "easy_clinic_app_other2" = "Other")) + 
+                              "easy_clinic_app_other" = "Other")) + 
   xlab("") +
   ylab("Proportion") +
   coord_flip() + 
@@ -837,3 +943,5 @@ tab_model(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
 <br>
 
 Only model two has a significant association between one of the constructs and being on ART. For each unit increase in resilience, there was a `r round(( tidy(m2, exponentiate = TRUE)$estimate[8]) - 1.00, 2) * 100`% increase in the odds of being on ART, after adjusting for confounders. 
+
+
