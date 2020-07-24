@@ -468,3 +468,4 @@ recap_strata_catvar_svy_forplots <- function(svy, varname, strata) {
   
   return(tab)
 }
+
