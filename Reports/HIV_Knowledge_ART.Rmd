@@ -81,7 +81,12 @@ svydf1 <- svydf %>%
                                             "Knows status and on ART",
                                             ifelse(hiv_knowledge == "Yes" & art_exposure == "No",
                                                    "Knows status and not on ART", "Does not know status"))),
-         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA)) %>%
+         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA),
+         parents_live_here = na_if(parents_live_here, "Missing"),
+         pregever = na_if(pregever, "Prefer Not to Say"),
+         bf = na_if(bf, "Prefer Not to Say"),
+         freq_hiv_test = na_if(freq_hiv_test, "Prefer Not to Say"),
+         rel_status2 = na_if(rel_status2, "Other")) %>%
   filter(hiv_final_wb == "Positive")
 
 # HIV positive, had sex
@@ -138,7 +143,12 @@ df1 <- df %>%
                                             "Knows status and on ART",
                                             ifelse(hiv_knowledge == "Yes" & art_exposure == "No",
                                                    "Knows status and not on ART", "Does not know status"))),
-         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA)) %>%
+         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA),
+         parents_live_here = na_if(parents_live_here, "Missing"),
+         pregever = na_if(pregever, "Prefer Not to Say"),
+         bf = na_if(bf, "Prefer Not to Say"),
+         freq_hiv_test = na_if(freq_hiv_test, "Prefer Not to Say"),
+         rel_status2 = na_if(rel_status2, "Other")) %>%
   filter(hiv_final_wb == "Positive")
 
 df2 <- df1 %>%
@@ -219,14 +229,25 @@ been assumed to self-report being HIV+ (i.e. We assumed they had knowledge of th
 # Participant characteristics
 
 ```{r part_tab_setup, include = FALSE}
+svydf1a <- svydf1 %>%
+  filter(!is.na(parents_live_here))
+
+svydf2a <- svydf2 %>%
+  filter(!is.na(pregever))
+
+svydf1b <- svydf1 %>%
+  filter(!is.na(rel_status2))
+
+svydf1c <- svydf1 %>%
+  filter(!is.na(bf))
 
 tab1 <- recap_uni_catvar_svy(svy = svydf1, var = age_cat)
 tab2 <- recap_uni_catvar_svy(svy = svydf1, var = highestpassed2)
-tab3 <- recap_uni_catvar_svy(svy = svydf1, var = parents_live_here)
+tab3 <- recap_uni_catvar_svy(svy = svydf1a, var = parents_live_here)
 tab4 <- recap_uni_catvar_svy(svy = svydf1, var = community)
 tab5 <- recap_uni_catvar_svy(svy = svydf1, var = health_problem)
 tab6 <- recap_uni_catvar_svy(svy = svydf1, var = hunger)
-tab7 <- recap_uni_catvar_svy(svy = svydf2, var = pregever)
+tab7 <- recap_uni_catvar_svy(svy = svydf2a, var = pregever)
 tab8 <- recap_uni_catvar_svy(svy = svydf1, var = ipv_any)
 tab9 <- recap_uni_catvar_svy(svy = svydf1, var = ever_raped)
 tab10 <- recap_uni_numvar_svy(svy = svydf1, var = wellbeing_score)
@@ -239,8 +260,8 @@ tab16 <- recap_uni_numvar_svy(svy = svydf1, var = support_group_score)
 tab17 <- recap_uni_numvar_svy(svy = svydf1, var = support_individuals_score)
 tab18 <- recap_uni_numvar_svy(svy = svydf1, var = gender_equity_score)
 tab19 <- recap_uni_numvar_svy(svy = svydf1, var = stigma_hivpos)
-tab20 <- recap_uni_catvar_svy(svy = svydf1, var = rel_status2)
-tab21 <- recap_uni_catvar_svy(svy = svydf1, var = bf)
+tab20 <- recap_uni_catvar_svy(svy = svydf1b, var = rel_status2)
+tab21 <- recap_uni_catvar_svy(svy = svydf1c, var = bf)
 tab22 <- recap_uni_catvar_svy(svy = svydf1, var = ever_sex)
 tab23 <- recap_uni_catvar_svy(svy = svydf1, var = trans_sex)
 tab24 <- recap_uni_catvar_svy(svy = svydf2, var = partner_older_5)
@@ -340,14 +361,28 @@ In the HERStory study there were `r nrow(df)` AGYW participants, of which `r nro
 <br>
 
 ```{r hiv_knowledge_tab_setup, include = FALSE}
+svydf1a <- svydf1 %>%
+  filter(!is.na(parents_live_here))
+
+svydf2a <- svydf2 %>%
+  filter(!is.na(pregever))
+
+svydf1b <- svydf1 %>%
+  filter(!is.na(rel_status2))
+
+svydf1c <- svydf1 %>%
+  filter(!is.na(bf))
+
+svydf4a <- svydf4 %>%
+  filter(!is.na(freq_hiv_test))
 
 tab1 <- recap_bi_catvar_svy(svy = svydf1, var = age_cat, byvar = hiv_knowledge)
 tab2 <- recap_bi_catvar_svy(svy = svydf1, var = highestpassed2, byvar = hiv_knowledge)
-tab3 <- recap_bi_catvar_svy(svy = svydf1, var = parents_live_here, byvar = hiv_knowledge)
+tab3 <- recap_bi_catvar_svy(svy = svydf1a, var = parents_live_here, byvar = hiv_knowledge)
 tab4 <- recap_bi_catvar_svy(svy = svydf1, var = community, byvar = hiv_knowledge)
 tab5 <- recap_bi_catvar_svy(svy = svydf1, var = health_problem, byvar = hiv_knowledge)
 tab6 <- recap_bi_catvar_svy(svy = svydf1, var = hunger, byvar = hiv_knowledge)
-tab7 <- recap_bi_catvar_svy(svy = svydf2, var = pregever, byvar = hiv_knowledge)
+tab7 <- recap_bi_catvar_svy(svy = svydf2a, var = pregever, byvar = hiv_knowledge)
 tab8 <- recap_bi_catvar_svy(svy = svydf1, var = ipv_any, byvar = hiv_knowledge)
 tab9 <- recap_bi_catvar_svy(svy = svydf1, var = ever_raped, byvar = hiv_knowledge)
 tab10 <- recap_bi_numvar_svy(svy = svydf1, var = wellbeing_score, byvar = hiv_knowledge)
@@ -359,15 +394,15 @@ tab15 <- recap_bi_numvar_svy(svy = svydf1, var = group_membership_score, byvar =
 tab16 <- recap_bi_numvar_svy(svy = svydf1, var = support_group_score, byvar = hiv_knowledge)
 tab17 <- recap_bi_numvar_svy(svy = svydf1, var = support_individuals_score, byvar = hiv_knowledge)
 tab18 <- recap_bi_numvar_svy(svy = svydf1, var = gender_equity_score, byvar = hiv_knowledge)
-tab19 <- recap_bi_catvar_svy(svy = svydf1, var = rel_status2, byvar = hiv_knowledge)
-tab20 <- recap_bi_catvar_svy(svy = svydf1, var = bf, byvar = hiv_knowledge)
+tab19 <- recap_bi_catvar_svy(svy = svydf1b, var = rel_status2, byvar = hiv_knowledge)
+tab20 <- recap_bi_catvar_svy(svy = svydf1c, var = bf, byvar = hiv_knowledge)
 tab21 <- recap_bi_catvar_svy(svy = svydf1, var = ever_sex, byvar = hiv_knowledge)
 tab22 <- recap_bi_catvar_svy(svy = svydf1, var = trans_sex, byvar = hiv_knowledge)
 tab23 <- recap_bi_catvar_svy(svy = svydf2, var = partner_older_5, byvar = hiv_knowledge)
 tab24 <- recap_bi_catvar_svy(svy = svydf1, var = condom, byvar = hiv_knowledge)
 tab25 <- recap_bi_catvar_svy(svy = svydf1, var = contraception, byvar = hiv_knowledge)
 tab26 <- recap_bi_catvar_svy(svy = svydf1, var = hiv_test, byvar = hiv_knowledge)
-tab27 <- recap_bi_catvar_svy(svy = svydf4, var = freq_hiv_test, byvar = hiv_knowledge)
+tab27 <- recap_bi_catvar_svy(svy = svydf4a, var = freq_hiv_test, byvar = hiv_knowledge)
 tab28 <- recap_bi_catvar_svy(svy = svydf4, var = result, byvar = hiv_knowledge)
 
 
@@ -520,14 +555,26 @@ Among the `r nrow(df3)` AGYW participants who knew their HIV+ status, `r nrow(df
 <br>
 
 ```{r art_tab_setup, include = FALSE}
+svydf6a <- svydf6 %>%
+  filter(!is.na(parents_live_here))
+
+svydf7a <- svydf7 %>%
+  filter(!is.na(pregever))
+
+svydf6b <- svydf6 %>%
+  filter(!is.na(rel_status2))
+
+svydf6c <- svydf6 %>%
+  filter(!is.na(bf))
+
 
 tab1 <- recap_bi_catvar_svy(svy = svydf6, var = age_cat, byvar = art_exposure)
 tab2 <- recap_bi_catvar_svy(svy = svydf6, var = highestpassed2, byvar = art_exposure)
-tab3 <- recap_bi_catvar_svy(svy = svydf6, var = parents_live_here, byvar = art_exposure)
+tab3 <- recap_bi_catvar_svy(svy = svydf6a, var = parents_live_here, byvar = art_exposure)
 tab4 <- recap_bi_catvar_svy(svy = svydf6, var = community, byvar = art_exposure)
 tab5 <- recap_bi_catvar_svy(svy = svydf6, var = health_problem, byvar = art_exposure)
 tab6 <- recap_bi_catvar_svy(svy = svydf6, var = hunger, byvar = art_exposure)
-tab7 <- recap_bi_catvar_svy(svy = svydf7, var = pregever, byvar = art_exposure)
+tab7 <- recap_bi_catvar_svy(svy = svydf7a, var = pregever, byvar = art_exposure)
 tab8 <- recap_bi_catvar_svy(svy = svydf6, var = ipv_any, byvar = art_exposure)
 tab9 <- recap_bi_catvar_svy(svy = svydf6, var = ever_raped, byvar = art_exposure)
 tab10 <- recap_bi_numvar_svy(svy = svydf6, var = wellbeing_score, byvar = art_exposure)
@@ -540,8 +587,8 @@ tab16 <- recap_bi_numvar_svy(svy = svydf6, var = support_group_score, byvar = ar
 tab17 <- recap_bi_numvar_svy(svy = svydf6, var = support_individuals_score, byvar = art_exposure)
 tab18 <- recap_bi_numvar_svy(svy = svydf6, var = gender_equity_score, byvar = art_exposure)
 tab19 <- recap_bi_numvar_svy(svy = svydf6, var = stigma_hivpos, byvar = art_exposure)
-tab20 <- recap_bi_catvar_svy(svy = svydf6, var = rel_status2, byvar = art_exposure)
-tab21 <- recap_bi_catvar_svy(svy = svydf6, var = bf, byvar = art_exposure)
+tab20 <- recap_bi_catvar_svy(svy = svydf6b, var = rel_status2, byvar = art_exposure)
+tab21 <- recap_bi_catvar_svy(svy = svydf6c, var = bf, byvar = art_exposure)
 tab22 <- recap_bi_catvar_svy(svy = svydf6, var = ever_sex, byvar = art_exposure)
 tab23 <- recap_bi_catvar_svy(svy = svydf6, var = trans_sex, byvar = art_exposure)
 tab24 <- recap_bi_catvar_svy(svy = svydf7, var = partner_older_5, byvar = art_exposure)
