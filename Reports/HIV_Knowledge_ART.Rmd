@@ -76,7 +76,12 @@ table, td, th {
 
 # HIV positive
 svydf1 <- svydf %>%
-  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No"))) %>%
+  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No")),
+         hiv_cascade_status = factor(ifelse(hiv_knowledge == "Yes" & art_exposure == "Yes", 
+                                            "Knows status and on ART",
+                                            ifelse(hiv_knowledge == "Yes" & art_exposure == "No",
+                                                   "Knows status and not on ART", "Does not know status"))),
+         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA)) %>%
   filter(hiv_final_wb == "Positive")
 
 # HIV positive, had sex
@@ -87,7 +92,7 @@ svydf2 <- svydf1 %>%
 svydf3 <- svydf1 %>%
   filter(ever_sex == "Yes" & pregever == "Yes")
 
-# HIV positvie, had an hiv test
+# HIV positive, had an hiv test
 svydf4 <- svydf1 %>%
   filter(hiv_test == "Yes")
 
@@ -128,7 +133,12 @@ svydf11 <- svydf6 %>%
 # Regular datasets
 # ====================
 df1 <- df %>%
-  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No"))) %>%
+  mutate(art_exposure = fct_drop(fct_relevel(art_exposure, "No")),
+         hiv_cascade_status = factor(ifelse(hiv_knowledge == "Yes" & art_exposure == "Yes", 
+                                            "Knows status and on ART",
+                                            ifelse(hiv_knowledge == "Yes" & art_exposure == "No",
+                                                   "Knows status and not on ART", "Does not know status"))),
+         hiv_cascade_status = replace(hiv_cascade_status, is.na(art_exposure), NA)) %>%
   filter(hiv_final_wb == "Positive")
 
 df2 <- df1 %>%
